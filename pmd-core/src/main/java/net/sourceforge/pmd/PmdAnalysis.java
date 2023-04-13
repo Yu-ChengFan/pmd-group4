@@ -52,22 +52,24 @@ import net.sourceforge.pmd.util.StringUtil;
 import net.sourceforge.pmd.util.log.MessageReporter;
 
 /**
- * Main programmatic API of PMD. Create and configure a {@link PMDConfiguration},
+ * Main programmatic API of PMD. Create and configure a
+ * {@link PMDConfiguration},
  * then use {@link #create(PMDConfiguration)} to obtain an instance.
  * You can perform additional configuration on the instance, eg adding
  * files to process, or additional rulesets and renderers. Then, call
  * {@link #performAnalysis()}. Example:
+ * 
  * <pre>{@code
- *   PMDConfiguration config = new PMDConfiguration();
- *   config.setDefaultLanguageVersion(LanguageRegistry.findLanguageByTerseName("java").getVersion("11"));
- *   config.setInputPaths("src/main/java");
- *   config.prependClasspath("target/classes");
- *   config.setMinimumPriority(RulePriority.HIGH);
- *   config.addRuleSet("rulesets/java/quickstart.xml");
- *   config.setReportFormat("xml");
- *   config.setReportFile("target/pmd-report.xml");
+ * PMDConfiguration config = new PMDConfiguration();
+ * config.setDefaultLanguageVersion(LanguageRegistry.findLanguageByTerseName("java").getVersion("11"));
+ * config.setInputPaths("src/main/java");
+ * config.prependClasspath("target/classes");
+ * config.setMinimumPriority(RulePriority.HIGH);
+ * config.addRuleSet("rulesets/java/quickstart.xml");
+ * config.setReportFormat("xml");
+ * config.setReportFile("target/pmd-report.xml");
  *
- *   try (PmdAnalysis pmd = PmdAnalysis.create(config)) {
+ * try (PmdAnalysis pmd = PmdAnalysis.create(config)) {
  *     // note: don't use `config` once a PmdAnalysis has been created.
  *     // optional: add more rulesets
  *     pmd.addRuleSet(pmd.newRuleSetLoader().loadFromResource("custom-ruleset.xml"));
@@ -77,7 +79,7 @@ import net.sourceforge.pmd.util.log.MessageReporter;
  *     pmd.addRenderer(renderer);
  *
  *     pmd.performAnalysis();
- *   }
+ * }
  * }</pre>
  *
  */
@@ -105,9 +107,8 @@ public final class PmdAnalysis implements AutoCloseable {
         this.configuration = config;
         this.reporter = config.getReporter();
         this.collector = FileCollector.newCollector(
-            config.getLanguageVersionDiscoverer(),
-            reporter
-        );
+                config.getLanguageVersionDiscoverer(),
+                reporter);
 
         for (Path path : config.getRelativizeRoots()) {
             this.collector.relativizeWith(path);
@@ -118,11 +119,12 @@ public final class PmdAnalysis implements AutoCloseable {
      * Constructs a new instance from a configuration.
      *
      * <ul>
-     * <li> The files paths (input files, filelist,
+     * <li>The files paths (input files, filelist,
      * exclude list, etc) are explored and the files to analyse are
      * collected into the file collector ({@link #files()}).
      * More can be added programmatically using the file collector.
-     * <li>The rulesets given in the configuration are loaded ({@link PMDConfiguration#getRuleSets()})
+     * <li>The rulesets given in the configuration are loaded
+     * ({@link PMDConfiguration#getRuleSets()})
      * <li>A renderer corresponding to the parameters of the configuration
      * is created and added (but not started).
      * </ul>
@@ -158,7 +160,7 @@ public final class PmdAnalysis implements AutoCloseable {
             }
 
             // TODO replace those with actual language properties when the
-            //  CLI syntax is implemented.
+            // CLI syntax is implemented.
             props.setProperty(LanguagePropertyBundle.SUPPRESS_MARKER, config.getSuppressMarker());
             if (props instanceof JvmLanguagePropertyBundle) {
                 ((JvmLanguagePropertyBundle) props).setClassLoader(config.getClassLoader());
@@ -177,7 +179,6 @@ public final class PmdAnalysis implements AutoCloseable {
     List<Renderer> renderers() {
         return renderers;
     }
-
 
     /**
      * Returns the file collector for the analysed sources.
@@ -214,7 +215,8 @@ public final class PmdAnalysis implements AutoCloseable {
     /**
      * Add several renderers at once.
      *
-     * @throws NullPointerException If the parameter is null, or any of its items is null.
+     * @throws NullPointerException If the parameter is null, or any of its items is
+     *                              null.
      */
     public void addRenderers(Collection<Renderer> renderers) {
         renderers.forEach(this::addRenderer);
@@ -237,7 +239,8 @@ public final class PmdAnalysis implements AutoCloseable {
     /**
      * Add several listeners at once.
      *
-     * @throws NullPointerException If the parameter is null, or any of its items is null.
+     * @throws NullPointerException If the parameter is null, or any of its items is
+     *                              null.
      * @see #addListener(GlobalAnalysisListener)
      */
     public void addListeners(Collection<? extends GlobalAnalysisListener> listeners) {
@@ -257,7 +260,8 @@ public final class PmdAnalysis implements AutoCloseable {
     /**
      * Add several rulesets at once.
      *
-     * @throws NullPointerException If the parameter is null, or any of its items is null.
+     * @throws NullPointerException If the parameter is null, or any of its items is
+     *                              null.
      */
     public void addRuleSets(Collection<RuleSet> ruleSets) {
         ruleSets.forEach(this::addRuleSet);
@@ -270,7 +274,6 @@ public final class PmdAnalysis implements AutoCloseable {
     public List<RuleSet> getRulesets() {
         return Collections.unmodifiableList(ruleSets);
     }
-
 
     /**
      * Returns a mutable bundle of language properties that are associated
@@ -324,12 +327,13 @@ public final class PmdAnalysis implements AutoCloseable {
         GlobalAnalysisListener listener;
         try {
             @SuppressWarnings("PMD.CloseResource")
-            AnalysisCacheListener cacheListener = new AnalysisCacheListener(configuration.getAnalysisCache(), rulesets, configuration.getClassLoader());
+            AnalysisCacheListener cacheListener = new AnalysisCacheListener(configuration.getAnalysisCache(), rulesets,
+                    configuration.getClassLoader());
             listener = GlobalAnalysisListener.tee(listOf(createComposedRendererListener(renderers),
-                                                         GlobalAnalysisListener.tee(listeners),
-                                                         GlobalAnalysisListener.tee(extraListeners),
-                                                         cacheListener));
-            
+                    GlobalAnalysisListener.tee(listeners),
+                    GlobalAnalysisListener.tee(extraListeners),
+                    cacheListener));
+
             // Initialize listeners
             try (ListenerInitializer initializer = listener.initializer()) {
                 initializer.setNumberOfFilesToAnalyze(textFiles.size());
@@ -350,23 +354,21 @@ public final class PmdAnalysis implements AutoCloseable {
             encourageToUseIncrementalAnalysis(configuration);
 
             try (LanguageProcessorRegistry lpRegistry = LanguageProcessorRegistry.create(
-                // only start the applicable languages (and dependencies)
-                new LanguageRegistry(getApplicableLanguages(true)),
-                langProperties,
-                reporter
-            )) {
+                    // only start the applicable languages (and dependencies)
+                    new LanguageRegistry(getApplicableLanguages(true)),
+                    langProperties,
+                    reporter)) {
                 // Note the analysis task is shared: all processors see
                 // the same file list, which may contain files for other
                 // languages.
                 AnalysisTask analysisTask = new AnalysisTask(
-                    rulesets,
-                    textFiles,
-                    listener,
-                    configuration.getThreads(),
-                    configuration.getAnalysisCache(),
-                    reporter,
-                    lpRegistry
-                );
+                        rulesets,
+                        textFiles,
+                        listener,
+                        configuration.getThreads(),
+                        configuration.getAnalysisCache(),
+                        reporter,
+                        lpRegistry);
 
                 List<AutoCloseable> analyses = new ArrayList<>();
                 try {
@@ -394,7 +396,6 @@ public final class PmdAnalysis implements AutoCloseable {
         }
     }
 
-
     private static GlobalAnalysisListener createComposedRendererListener(List<Renderer> renderers) throws Exception {
         if (renderers.isEmpty()) {
             return GlobalAnalysisListener.noop();
@@ -404,8 +405,8 @@ public final class PmdAnalysis implements AutoCloseable {
         for (Renderer renderer : renderers) {
             try {
                 @SuppressWarnings("PMD.CloseResource")
-                GlobalAnalysisListener listener =
-                    Objects.requireNonNull(renderer.newListener(), "Renderer should provide non-null listener");
+                GlobalAnalysisListener listener = Objects.requireNonNull(renderer.newListener(),
+                        "Renderer should provide non-null listener");
                 rendererListeners.add(listener);
             } catch (Exception ioe) {
                 // close listeners so far, throw their close exception or the ioe
@@ -420,6 +421,16 @@ public final class PmdAnalysis implements AutoCloseable {
         Set<Language> languages = new HashSet<>();
         LanguageVersionDiscoverer discoverer = configuration.getLanguageVersionDiscoverer();
 
+        // Extract nested loop into a separate method
+        collectApplicableLanguages(ruleSets, languages, discoverer, quiet);
+        // Extract nested loop into a separate method
+        handleLanguageDependencies(languages, configuration.getLanguageRegistry());
+
+        return languages;
+    }
+
+    private void collectApplicableLanguages(List<RuleSet> ruleSets, Set<Language> languages,
+            LanguageVersionDiscoverer discoverer, boolean quiet) {
         for (RuleSet ruleSet : ruleSets) {
             for (Rule rule : ruleSet.getRules()) {
                 Language ruleLanguage = rule.getLanguage();
@@ -430,15 +441,16 @@ public final class PmdAnalysis implements AutoCloseable {
                         configuration.checkLanguageIsRegistered(ruleLanguage);
                         languages.add(ruleLanguage);
                         if (!quiet) {
-                            LOG.trace("Using {} version ''{}''", version.getLanguage().getName(), version.getTerseName());
+                            LOG.trace("Using {} version ''{}''", version.getLanguage().getName(),
+                                    version.getTerseName());
                         }
                     }
                 }
             }
         }
+    }
 
-        // collect all dependencies, they shouldn't be filtered out
-        LanguageRegistry reg = configuration.getLanguageRegistry();
+    private void handleLanguageDependencies(Set<Language> languages, LanguageRegistry reg) {
         boolean changed;
         do {
             changed = false;
@@ -448,15 +460,13 @@ public final class PmdAnalysis implements AutoCloseable {
                     if (depLang == null) {
                         // todo maybe report all then throw
                         throw new IllegalStateException(
-                            "Language " + lang.getId() + " has unsatisfied dependencies: "
-                                + depId + " is not found in " + reg
-                        );
+                                "Language " + lang.getId() + " has unsatisfied dependencies: "
+                                        + depId + " is not found in " + reg);
                     }
                     changed |= languages.add(depLang);
                 }
             }
         } while (changed);
-        return languages;
     }
 
     /**
@@ -469,12 +479,11 @@ public final class PmdAnalysis implements AutoCloseable {
 
         for (final Rule rule : brokenRules) {
             reporter.warn("Removed misconfigured rule: {0} cause: {1}",
-                          rule.getName(), rule.dysfunctionReason());
+                    rule.getName(), rule.dysfunctionReason());
         }
 
         return brokenRules;
     }
-
 
     public MessageReporter getReporter() {
         return reporter;
@@ -543,12 +552,12 @@ public final class PmdAnalysis implements AutoCloseable {
         final MessageReporter reporter = configuration.getReporter();
 
         if (!configuration.isIgnoreIncrementalAnalysis()
-            && configuration.getAnalysisCache() instanceof NoopAnalysisCache
-            && reporter.isLoggable(Level.WARN)) {
-            final String version =
-                PMDVersion.isUnknown() || PMDVersion.isSnapshot() ? "latest" : "pmd-" + PMDVersion.VERSION;
+                && configuration.getAnalysisCache() instanceof NoopAnalysisCache
+                && reporter.isLoggable(Level.WARN)) {
+            final String version = PMDVersion.isUnknown() || PMDVersion.isSnapshot() ? "latest"
+                    : "pmd-" + PMDVersion.VERSION;
             reporter.warn("This analysis could be faster, please consider using Incremental Analysis: "
-                            + "https://pmd.github.io/{0}/pmd_userdocs_incremental_analysis.html", version);
+                    + "https://pmd.github.io/{0}/pmd_userdocs_incremental_analysis.html", version);
         }
     }
 }
