@@ -16,6 +16,7 @@ import net.sourceforge.pmd.RuleViolation;
  * @author Vladimir
  */
 public class VBHTMLRenderer extends AbstractIncrementingRenderer {
+    private static final String TABLE_START = "<table border=\"0\" width=\"80%\">";
 
     public static final String NAME = "vbhtml";
 
@@ -54,7 +55,7 @@ public class VBHTMLRenderer extends AbstractIncrementingRenderer {
                     colorize = false;
                 }
                 filename = nextFilename;
-                sb.append("<table border=\"0\" width=\"80%\">");
+                sb.append(TABLE_START);
                 sb.append("<tr id=TableHeader><td colspan=\"2\"><font class=title>&nbsp;").append(filename)
                         .append("</font></tr>");
                 sb.append(lineSep);
@@ -87,7 +88,7 @@ public class VBHTMLRenderer extends AbstractIncrementingRenderer {
         // output the problems
         if (!errors.isEmpty()) {
             sb.setLength(0);
-            sb.append("<table border=\"0\" width=\"80%\">");
+            sb.append(TABLE_START);
             sb.append("<tr id=TableHeader><td colspan=\"2\"><font class=title>&nbsp;Problems found</font></td></tr>");
             boolean colorize = false;
             for (Report.ProcessingError error : errors) {
@@ -106,7 +107,7 @@ public class VBHTMLRenderer extends AbstractIncrementingRenderer {
 
         if (!configErrors.isEmpty()) {
             sb.setLength(0);
-            sb.append("<table border=\"0\" width=\"80%\">");
+            sb.append(TABLE_START);
             sb.append("<tr id=TableHeader><td colspan=\"2\"><font class=title>&nbsp;Configuration problems found</font></td></tr>");
             boolean colorize = false;
             for (Report.ConfigurationError error : configErrors) {
