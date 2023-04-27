@@ -53,20 +53,6 @@ public abstract class AbstractAccumulatingRenderer extends AbstractRenderer {
     }
 
     /**
-     * {@inheritDoc}
-     * 
-     * @deprecated This is internal API. Do not override when extending {@link AbstractAccumulatingRenderer}.
-     * In PMD7 this method will be made final.
-     */
-    @Override
-    @InternalApi
-    @Deprecated
-    public final void renderFileReport(Report report) throws IOException {
-        // do nothing, final because it will never be called by the listener
-        Objects.requireNonNull(report);
-    }
-
-    /**
      * Output the report, called once at the end of the analysis.
      *
      * {@inheritDoc}
