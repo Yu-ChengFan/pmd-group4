@@ -33,7 +33,7 @@ import net.sourceforge.pmd.reporting.GlobalAnalysisListener;
 public abstract class AbstractAccumulatingRenderer extends AbstractRenderer {
 
 
-    public AbstractAccumulatingRenderer(String name, String description) {
+    protected AbstractAccumulatingRenderer(String name, String description) {
         super(name, description);
     }
 
