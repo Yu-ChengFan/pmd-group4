@@ -88,17 +88,21 @@ public class CSVRenderer extends AbstractIncrementingRenderer {
         PROPERTY_DESCRIPTORS_BY_ID.put(id, prop);
         return prop;
     }
+    
+    private boolean getProperty(boolean propValue) {
+        // implementation for getting the property value for the given property ID
+        return propValue;
+    }
 
     private List<ColumnDescriptor<RuleViolation>> activeColumns() {
 
         List<ColumnDescriptor<RuleViolation>> actives = new ArrayList<>();
 
         for (ColumnDescriptor<RuleViolation> desc : allColumns) {
-            PropertyDescriptor<Boolean> prop = booleanPropertyFor(desc.id, null);
-            if (getProperty(prop)) {
+            boolean propValue = booleanPropertyFor(desc.id, null);
+            if (getProperty(propValue)) {
                 actives.add(desc);
             }
-
         }
         return actives;
     }
