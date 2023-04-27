@@ -118,29 +118,29 @@ public class CodeClimateRenderer extends AbstractIncrementingRenderer {
     }
 
     private <T> String getBody() {
+        final String NEWLINE = "\\n";
         StringBuilder result = new StringBuilder();
         result.append("## ")
                 .append(rule.getName())
-                .append("\\n\\n")
+                .append(NEWLINE + NEWLINE)
                 .append("Since: PMD ")
                 .append(rule.getSince())
-                .append("\\n\\n")
+                .append(NEWLINE + NEWLINE)
                 .append("Priority: ")
                 .append(rule.getPriority())
-                .append("\\n\\n")
+                .append(NEWLINE + NEWLINE)
                 .append("[Categories](https://github.com/codeclimate/platform/blob/master/spec/analyzers/SPEC.md#categories): ")
                 .append(Arrays.toString(getCategories()).replaceAll("[\\[\\]]", ""))
-                .append("\\n\\n")
+                .append(NEWLINE + NEWLINE)
                 .append("[Remediation Points](https://github.com/codeclimate/platform/blob/master/spec/analyzers/SPEC.md#remediation-points): ")
                 .append(getRemediationPoints())
-                .append("\\n\\n")
+                .append(NEWLINE + NEWLINE)
                 .append(cleaned(rule.getDescription()));
-
-        if (!rule.getExamples().isEmpty()) {
-            result.append("\\n\\n### Example:\\n\\n");
+    if (!rule.getExamples().isEmpty()) {
+        result.append(NEWLINE + NEWLINE + "### Example:" + NEWLINE + NEWLINE);
 
             for (String snippet : rule.getExamples()) {
-                String exampleSnippet = snippet.replaceAll("\\n", "\\\\n");
+                String exampleSnippet = snippet.replaceAll("\\n", NEWLINE);
                 exampleSnippet = exampleSnippet.replaceAll("\\t", "\\\\t");
                 result.append("```java\\n").append(exampleSnippet).append("\\n```  ");
             }
@@ -164,7 +164,7 @@ public class CodeClimateRenderer extends AbstractIncrementingRenderer {
                 if (propertyValue == null) {
                     propertyValue = "";
                 }
-                propertyValue = propertyValue.replaceAll("(\n|\r\n|\r)", "\\\\n");
+                propertyValue = propertyValue.replaceAll("(\n|\r\n|\r)", NEWLINE);
 
                 result.append(propertyName).append(" | ").append(propertyValue).append(" | ").append(property.description()).append("\\n");
             }
